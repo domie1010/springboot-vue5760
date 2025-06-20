@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.WangfanYuyueDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yonghu_id as yonghuId
+        ,a.wangfan_yuyue_text as wangfanYuyueText
+        ,a.wangfan_yuyue_types as wangfanYuyueTypes
+        ,a.wangfan_yuyue_mudidi as wangfanYuyueMudidi
+        ,a.wangfan_yuyue_chufadi as wangfanYuyueChufadi
+        ,a.wangfan_yuyue_chufa_time as wangfanYuyueChufaTime
+        ,a.wangfan_yuyue_daoda_time as wangfanYuyueDaodaTime
+        ,a.wangfan_yuyue_yesno_types as wangfanYuyueYesnoTypes
+        ,a.wangfan_yuyue_yesno_text as wangfanYuyueYesnoText
+        ,a.wangfan_yuyue_shenhe_time as wangfanYuyueShenheTime
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.WangfanYuyueView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,yonghu.yonghu_uuid_number as yonghuUuidNumber
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_types as yonghuTypes
+        ,yonghu.yonghu_guankong_types as yonghuGuankongTypes
+        ,yonghu.yonghu_email as yonghuEmail
+
+        FROM wangfan_yuyue  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test=" params.wangfanYuyueText != '' and params.wangfanYuyueText != null and params.wangfanYuyueText != 'null' ">
+                and a.wangfan_yuyue_text like CONCAT('%',#{params.wangfanYuyueText},'%')
+            </if>
+            <if test="params.wangfanYuyueTypes != null and params.wangfanYuyueTypes != ''">
+                and a.wangfan_yuyue_types = #{params.wangfanYuyueTypes}
+            </if>
+            <if test=" params.wangfanYuyueMudidi != '' and params.wangfanYuyueMudidi != null and params.wangfanYuyueMudidi != 'null' ">
+                and a.wangfan_yuyue_mudidi like CONCAT('%',#{params.wangfanYuyueMudidi},'%')
+            </if>
+            <if test=" params.wangfanYuyueChufadi != '' and params.wangfanYuyueChufadi != null and params.wangfanYuyueChufadi != 'null' ">
+                and a.wangfan_yuyue_chufadi like CONCAT('%',#{params.wangfanYuyueChufadi},'%')
+            </if>
+            <if test=" params.wangfanYuyueChufaTimeStart != '' and params.wangfanYuyueChufaTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.wangfan_yuyue_chufa_time) >= UNIX_TIMESTAMP(#{params.wangfanYuyueChufaTimeStart}) ]]>
+            </if>
+            <if test=" params.wangfanYuyueChufaTimeEnd != '' and params.wangfanYuyueChufaTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.wangfan_yuyue_chufa_time) <= UNIX_TIMESTAMP(#{params.wangfanYuyueChufaTimeEnd}) ]]>
+            </if>
+            <if test="params.wangfanYuyueChufaTime != null and params.wangfanYuyueChufaTime != ''">
+                and a.wangfan_yuyue_chufa_time = #{params.wangfanYuyueChufaTime}
+            </if>
+            <if test=" params.wangfanYuyueDaodaTimeStart != '' and params.wangfanYuyueDaodaTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.wangfan_yuyue_daoda_time) >= UNIX_TIMESTAMP(#{params.wangfanYuyueDaodaTimeStart}) ]]>
+            </if>
+            <if test=" params.wangfanYuyueDaodaTimeEnd != '' and params.wangfanYuyueDaodaTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.wangfan_yuyue_daoda_time) <= UNIX_TIMESTAMP(#{params.wangfanYuyueDaodaTimeEnd}) ]]>
+            </if>
+            <if test="params.wangfanYuyueDaodaTime != null and params.wangfanYuyueDaodaTime != ''">
+                and a.wangfan_yuyue_daoda_time = #{params.wangfanYuyueDaodaTime}
+            </if>
+            <if test="params.wangfanYuyueYesnoTypes != null and params.wangfanYuyueYesnoTypes != ''">
+                and a.wangfan_yuyue_yesno_types = #{params.wangfanYuyueYesnoTypes}
+            </if>
+            <if test=" params.wangfanYuyueYesnoText != '' and params.wangfanYuyueYesnoText != null and params.wangfanYuyueYesnoText != 'null' ">
+                and a.wangfan_yuyue_yesno_text like CONCAT('%',#{params.wangfanYuyueYesnoText},'%')
+            </if>
+            <if test=" params.wangfanYuyueShenheTimeStart != '' and params.wangfanYuyueShenheTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.wangfan_yuyue_shenhe_time) >= UNIX_TIMESTAMP(#{params.wangfanYuyueShenheTimeStart}) ]]>
+            </if>
+            <if test=" params.wangfanYuyueShenheTimeEnd != '' and params.wangfanYuyueShenheTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.wangfan_yuyue_shenhe_time) <= UNIX_TIMESTAMP(#{params.wangfanYuyueShenheTimeEnd}) ]]>
+            </if>
+            <if test="params.wangfanYuyueShenheTime != null and params.wangfanYuyueShenheTime != ''">
+                and a.wangfan_yuyue_shenhe_time = #{params.wangfanYuyueShenheTime}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuUuidNumber != '' and params.yonghuUuidNumber != null and params.yonghuUuidNumber != 'null' ">
+                and yonghu.yonghu_uuid_number like CONCAT('%',#{params.yonghuUuidNumber},'%')
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test="params.yonghuTypes != null  and params.yonghuTypes != ''">
+                and yonghu.yonghu_types = #{params.yonghuTypes}
+            </if>
+
+            <if test="params.yonghuGuankongTypes != null  and params.yonghuGuankongTypes != ''">
+                and yonghu.yonghu_guankong_types = #{params.yonghuGuankongTypes}
+            </if>
+
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
